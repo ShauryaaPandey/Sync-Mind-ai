@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { socketService } from '../services/socket';
 import { Plus, FileText, CheckCircle2 } from 'lucide-react';
 import API from '../services/api';
 import { NewMeetingModal } from '../components/NewMeetingModal';
@@ -18,6 +19,10 @@ export const Dashboard = () => {
 
   useEffect(() => {
     fetchMeetings();
+    socketService.connect();
+    return () => {
+      socketService.disconnect();
+    };
   }, []);
 
   return (
