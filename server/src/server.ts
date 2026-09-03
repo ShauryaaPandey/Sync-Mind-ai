@@ -6,7 +6,8 @@ import { connectDB } from './config/db';
 import { initSocket } from './socket';
 import authRoutes from './routes/authRoutes';
 import meetingRoutes from './routes/meetingRoutes';
-//import taskRoutes from './routes/taskRoutes';
+import taskRoutes from './routes/taskRoutes';
+import analyticsRoutes from './routes/analyticsRoutes';
 
 dotenv.config();
 connectDB();
@@ -14,16 +15,15 @@ connectDB();
 const app = express();
 const httpServer = createServer(app);
 
-// Initialize WebSockets
 export const io = initSocket(httpServer);
 
 app.use(cors());
 app.use(express.json());
 
-// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/meetings', meetingRoutes);
-//app.use('/api/tasks', taskRoutes);
+app.use('/api/tasks', taskRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK', message: 'SyncMind Server is Running' });
