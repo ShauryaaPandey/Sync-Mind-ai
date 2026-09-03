@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
-import { socketService } from '../services/socket';
 import { Plus, FileText, CheckCircle2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
 import { NewMeetingModal } from '../components/NewMeetingModal';
+import { socketService } from '../services/socket';
 
 export const Dashboard = () => {
   const [meetings, setMeetings] = useState<any[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   const fetchMeetings = async () => {
     try {
@@ -35,7 +37,7 @@ export const Dashboard = () => {
           </div>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition font-medium"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition font-medium cursor-pointer"
           >
             <Plus className="w-5 h-5" /> New Meeting
           </button>
@@ -43,7 +45,11 @@ export const Dashboard = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {meetings.map((meeting) => (
-            <div key={meeting._id} className="bg-gray-800 border border-gray-700 p-5 rounded-xl flex flex-col justify-between">
+            <div
+              key={meeting._id}
+              onClick={() => navigate(`/meetings/${meeting._id}`)}
+              className="bg-gray-800 border border-gray-700 p-5 rounded-xl cursor-pointer hover:border-indigo-500/50 transition flex flex-col justify-between"
+            >
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <span className={`text-xs px-2.5 py-1 rounded-full font-semibold ${
@@ -70,7 +76,7 @@ export const Dashboard = () => {
         {meetings.length === 0 && (
           <div className="text-center py-16 bg-gray-800/50 border border-gray-700/50 rounded-xl">
             <p className="text-gray-400 text-lg mb-4">No meetings processed yet.</p>
-            <button onClick={() => setIsModalOpen(true)} className="bg-indigo-600 text-white px-4 py-2 rounded-lg">
+            <button onClick={() => setIsModalOpen(true)} className="bg-indigo-600 text-white px-4 py-2 rounded-lg cursor-pointer">
               Process First Meeting
             </button>
           </div>
