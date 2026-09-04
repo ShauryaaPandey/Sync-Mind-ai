@@ -2,30 +2,30 @@ import { GoogleGenAI } from '@google/genai';
 
 export const processMeetingTranscript = async (transcriptText: string) => {
   const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    throw new Error('GEMINI_API_KEY is missing in environment variables.');
+  if (!apiKey || apiKey === 'your_gemini_api_key_here') {
+    throw new Error('GEMINI_API_KEY is missing or invalid in server .env file.');
   }
 
   const ai = new GoogleGenAI({ apiKey });
 
   const prompt = `
-    You are an expert AI meeting assistant. Analyze the meeting transcript provided below and return ONLY a valid raw JSON object (no markdown code blocks, no trailing comments).
+    You are an expert AI meeting assistant. Analyze the meeting transcript provided below and return ONLY a valid raw JSON object (no markdown formatting, no code blocks).
 
     Return JSON with this exact structure:
     {
-      "title": "A concise title summarizing the meeting topic",
-      "summary": "A detailed executive summary of the discussion",
+      "title": "Concise meeting title",
+      "summary": "Detailed executive summary",
       "actionItems": [
         {
-          "title": "Clear description of action item or task",
-          "assignedTo": "Name of person or 'Unassigned'",
+          "title": "Description of action item",
+          "assignedTo": "Name or Unassigned",
           "completed": false
         }
       ],
       "keyDecisions": [
-        "List of concrete decisions made during the meeting"
+        "Concrete decision made"
       ],
-      "sentiment": "Positive" | "Neutral" | "Negative"
+      "sentiment": "Positive"
     }
 
     Meeting Transcript:
@@ -34,7 +34,7 @@ export const processMeetingTranscript = async (transcriptText: string) => {
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3.6-flash',
       contents: prompt,
       config: {
         responseMimeType: 'application/json'
@@ -42,9 +42,10 @@ export const processMeetingTranscript = async (transcriptText: string) => {
     });
 
     const rawText = response.text || '{}';
-    return JSON.parse(rawText);
+    const cleanedJson = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+    return JSON.parse(cleanedJson);
   } catch (error) {
-    console.error('Gemini AI Processing Error:', error);
-    throw new Error('Failed to extract meeting structured data using Gemini AI');
+    console.error('Gemini Service Error:', error);
+    throw new Error('Failed to generate summary with Gemini AI: ' + (error as Error).message);
   }
 };
