@@ -65,7 +65,7 @@ export const summarizeMeetingFromChat = async (req: AuthRequest, res: Response) 
     const { id } = req.params;
     const userId = req.userId;
 
-    const meeting = await Meeting.findOne({ _id: id, userId });
+    const meeting = await Meeting.findById(id);
     if (!meeting) {
       return res.status(404).json({ message: 'Meeting not found' });
     }
@@ -198,13 +198,12 @@ export const chatWithMeeting = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
     const { question } = req.body;
-    const userId = req.userId;
 
     if (!question || typeof question !== 'string' || question.trim().length === 0) {
       return res.status(400).json({ message: 'Question is required' });
     }
 
-    const meeting = await Meeting.findOne({ _id: id, userId });
+    const meeting = await Meeting.findById(id);
     if (!meeting) {
       return res.status(404).json({ message: 'Meeting not found' });
     }
