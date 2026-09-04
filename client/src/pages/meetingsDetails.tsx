@@ -6,13 +6,21 @@ import {
   FileText,
   Lightbulb,
   Search,
-  Video
+  Video,
+  MessageSquare,
+  Send
 } from 'lucide-react';
 
-import API from '../services/api';
+import API, { chatWithMeeting } from '../services/api';
 import { TaskChecklist } from '../components/TaskCheckList';
 import { SentimentBadge } from '../components/SentimentBadge';
 import { socketService } from '../services/socket';
+
+interface QAPair {
+  question: string;
+  answer: string;
+  sourceChunks?: Array<{ text: string; score: number }>;
+}
 
 export const MeetingDetails = () => {
   const { id } = useParams();
@@ -20,15 +28,17 @@ export const MeetingDetails = () => {
 
   const [meeting, setMeeting] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<
-    'summary' | 'tasks' | 'decisions' | 'transcript'
+    'summary' | 'tasks' | 'decisions' | 'transcript' | 'chat'
   >('summary');
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [chatHistory, setChatHistory] = useState<QAPair[]>([]);
+  const [currentQuestion, setCurrentQuestion] = useState('');
+  const [isAsking, setIsAsking] = useState(false);
 
   useEffect(() => {
     const fetchMeeting = async () => {
       try {
-        // Try shared access first (for collaborative meetings)
         const res = await API.get(`/meetings/${id}/shared`);
         setMeeting(res.data);
       } catch (err) {
@@ -51,6 +61,32 @@ export const MeetingDetails = () => {
       }
     };
   }, [id]);
+
+  const handleAskQuestion = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!currentQuestion.trim() || !id || isAsking) return;
+
+    const question = currentQuestion.trim();
+    setCurrentQuestion('');
+    setIsAsking(true);
+
+    try {
+      const res = await chatWithMeeting(id, question);
+      setChatHistory([...chatHistory, {
+        question,
+        answer: res.data.answer,
+        sourceChunks: res.data.sourceChunks
+      }]);
+    } catch (err: any) {
+      setChatHistory([...chatHistory, {
+        question,
+        answer: `Error: ${err.response?.data?.message || 'Failed to get answer'}`
+      }]);
+    } finally {
+      setIsAsking(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -109,7 +145,8 @@ export const MeetingDetails = () => {
             icon: CheckSquare
           },
           { id: 'decisions', label: 'Key Decisions', icon: Lightbulb },
-          { id: 'transcript', label: 'Full Transcript', icon: Search }
+          { id: 'transcript', label: 'Full Transcript', icon: Search },
+          { id: 'chat', label: 'Ask AI', icon: MessageSquare }
         ].map((tab) => {
           const Icon = tab.icon;
 
@@ -118,7 +155,7 @@ export const MeetingDetails = () => {
               key={tab.id}
               onClick={() =>
                 setActiveTab(
-                  tab.id as 'summary' | 'tasks' | 'decisions' | 'transcript'
+                  tab.id as 'summary' | 'tasks' | 'decisions' | 'transcript' | 'chat'
                 )
               }
               className={`flex items-center gap-2 pb-3 text-sm font-medium border-b-2 transition cursor-pointer ${
@@ -157,7 +194,7 @@ export const MeetingDetails = () => {
               key={index}
               className="p-4 bg-gray-800 border border-gray-700 rounded-lg text-gray-200"
             >
-              💡 {decision}
+              {decision}
             </div>
           ))}
         </div>
@@ -188,6 +225,77 @@ export const MeetingDetails = () => {
                 </p>
               ))}
           </div>
+        </div>
+      )}
+
+      {activeTab === 'chat' && (
+        <div className="bg-gray-800 border border-gray-700 rounded-xl overflow-hidden flex flex-col" style={{ height: '500px' }}>
+          <div className="p-4 border-b border-gray-700 bg-gray-800/50">
+            <h3 className="text-lg font-semibold flex items-center gap-2">
+              <MessageSquare className="w-5 h-5 text-indigo-400" />
+              Ask questions about this meeting
+            </h3>
+            <p className="text-sm text-gray-400 mt-1">
+              AI will answer based on the meeting transcript using RAG
+            </p>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {chatHistory.length === 0 && (
+              <div className="text-center text-gray-500 py-12">
+                <MessageSquare className="w-12 h-12 mx-auto mb-3 opacity-40" />
+                <p>No questions yet. Ask anything about this meeting.</p>
+              </div>
+            )}
+
+            {chatHistory.map((qa, idx) => (
+              <div key={idx} className="space-y-3">
+                <div className="flex justify-end">
+                  <div className="bg-indigo-600 px-4 py-2 rounded-lg max-w-[80%]">
+                    <p className="text-sm font-medium">{qa.question}</p>
+                  </div>
+                </div>
+                <div className="flex justify-start">
+                  <div className="bg-gray-700 border border-gray-600 px-4 py-2 rounded-lg max-w-[80%]">
+                    <p className="text-sm text-gray-200">{qa.answer}</p>
+                    {qa.sourceChunks && qa.sourceChunks.length > 0 && (
+                      <p className="text-xs text-gray-400 mt-2">
+                        Based on {qa.sourceChunks.length} relevant passage(s)
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {isAsking && (
+              <div className="flex justify-start">
+                <div className="bg-gray-700 border border-gray-600 px-4 py-2 rounded-lg">
+                  <p className="text-sm text-gray-400">Thinking...</p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <form onSubmit={handleAskQuestion} className="p-4 border-t border-gray-700 bg-gray-800/50">
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={currentQuestion}
+                onChange={(e) => setCurrentQuestion(e.target.value)}
+                placeholder="Ask a question about this meeting..."
+                disabled={isAsking}
+                className="flex-1 bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 disabled:opacity-50"
+              />
+              <button
+                type="submit"
+                disabled={!currentQuestion.trim() || isAsking}
+                className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-2 rounded-lg transition"
+              >
+                <Send className="w-4 h-4" />
+              </button>
+            </div>
+          </form>
         </div>
       )}
     </div>

@@ -23,4 +23,12 @@ API.interceptors.response.use(
   }
 );
 
+export const searchMeetings = async (query: string) => {
+  return API.post('/meetings/search', { query });
+};
+
+export const chatWithMeeting = async (meetingId: string, question: string) => {
+  return API.post(`/meetings/${meetingId}/chat`, { question });
+};
+
 export default API;

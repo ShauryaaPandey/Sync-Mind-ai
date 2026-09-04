@@ -23,6 +23,12 @@ A real-time collaborative meeting management platform powered by AI. Transform y
 - Sentiment analysis (Positive, Neutral, Negative)
 - Support for both live chat and transcript processing
 
+**Semantic Search & RAG**
+- Vector embeddings-powered semantic search across all meetings
+- Natural language queries (e.g., "pricing page redesign discussion")
+- RAG (Retrieval-Augmented Generation) chat with individual meetings
+- Ask questions about specific meetings with context-aware AI responses
+
 **Task Management**
 - Interactive checklists with real-time status updates
 - Cross-participant task synchronization
@@ -32,8 +38,9 @@ A real-time collaborative meeting management platform powered by AI. Transform y
 
 **Frontend:** React 18, TypeScript, Socket.IO Client, TailwindCSS, React Router, Axios, Vite  
 **Backend:** Node.js, Express, TypeScript, Socket.IO, MongoDB, Mongoose  
-**AI/ML:** Google Gemini AI  
+**AI/ML:** Google Gemini AI (text generation & embeddings)  
 **Authentication:** JWT, bcryptjs  
+**Vector Search:** Text embeddings with cosine similarity  
 **Other:** Multer (file uploads), CORS
 
 ## Installation
@@ -92,10 +99,25 @@ Access the application at `http://localhost:5173`
 3. Paste your meeting notes or transcript
 4. Click "Generate Notes & Tasks" for instant AI analysis
 
+### Semantic Search
+
+1. Use the search bar on the dashboard
+2. Enter natural language queries (e.g., "deployment concerns" or "pricing discussion")
+3. View relevant meetings with snippets and relevance scores
+4. Click any result to view full meeting details
+
+### Ask AI About Meetings
+
+1. Open any meeting from the dashboard
+2. Click the "Ask AI" tab
+3. Type questions about the meeting (e.g., "What was decided about the launch date?")
+4. Receive context-aware answers based on meeting content
+5. View source passages used to generate each answer
+
 ### Managing Meetings
 
 - View all meetings from the dashboard
-- Click any meeting to see details: Summary, Action Items, Key Decisions, Full Transcript
+- Click any meeting to see details: Summary, Action Items, Key Decisions, Full Transcript, Ask AI
 - Mark tasks as complete by clicking them (syncs across all participants)
 - Access past meeting rooms via the "Live Room" button
 
@@ -112,6 +134,8 @@ Access the application at `http://localhost:5173`
 - `POST /api/meetings/create` - Create empty meeting for live chat
 - `POST /api/meetings/process` - Process transcript with AI
 - `POST /api/meetings/:id/summarize` - Summarize live chat messages
+- `POST /api/meetings/search` - Semantic search across meetings
+- `POST /api/meetings/:id/chat` - RAG chat with specific meeting
 
 ### Chat
 - `GET /api/chat/meetings/:id/room` - Get meeting room and message history
@@ -155,9 +179,9 @@ Sync-Mind-ai/
 │   │   ├── config/         # Database configuration
 │   │   ├── controllers/    # Request handlers
 │   │   ├── middlewares/    # Auth and upload middlewares
-│   │   ├── models/         # MongoDB schemas
+│   │   ├── models/         # MongoDB schemas (Meeting, User, ChatMessage, MeetingChunk)
 │   │   ├── routes/         # API routes
-│   │   ├── services/       # AI processing service
+│   │   ├── services/       # AI processing & embedding services
 │   │   ├── socket.ts       # Socket.IO server
 │   │   └── server.ts       # Application entry point
 │   └── package.json
@@ -226,6 +250,17 @@ npm run lint     # Run ESLint
 - Verify `GEMINI_API_KEY` is valid
 - Ensure meeting has at least one message
 - Check backend logs for detailed errors
+
+**Semantic search returns no results:**
+- Wait a few seconds after creating meetings for embeddings to generate
+- Check server logs for "Embedded X chunks" messages
+- Try more specific search queries
+- Verify MongoDB is storing MeetingChunk documents
+
+**RAG chat gives generic answers:**
+- Ensure the meeting has substantial transcript content
+- Check that embeddings were generated for the meeting
+- Try more specific questions related to meeting content
 
 ## Performance Considerations
 
