@@ -1,6 +1,6 @@
 # SyncMind AI
 
-A real-time collaborative meeting management platform powered by AI. Transform your meetings into actionable insights with live chat rooms, instant messaging, and intelligent summarization using Google Gemini AI.
+An enterprise-grade, real-time collaborative meeting intelligence platform that transforms conversations into actionable insights. Built with modern web technologies and powered by Google Gemini AI, SyncMind AI leverages advanced vector embeddings and RAG (Retrieval-Augmented Generation) to deliver semantic search and context-aware AI assistance.
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
@@ -8,47 +8,59 @@ A real-time collaborative meeting management platform powered by AI. Transform y
 [![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
 [![Socket.IO](https://img.shields.io/badge/Socket.IO-010101?style=for-the-badge&logo=socketdotio&logoColor=white)](https://socket.io/)
 
-## Features
+## Key Features
 
-**Real-Time Collaboration**
-- Live meeting rooms with instant message synchronization
-- Multi-user support with participant tracking
-- Typing indicators and presence awareness
-- One-click meeting link sharing
+### Real-Time Collaboration
+- **Live Meeting Rooms** with WebSocket-powered instant message synchronization
+- **Multi-User Support** with real-time participant tracking and presence awareness
+- **Typing Indicators** for enhanced collaborative experience
+- **One-Click Sharing** with secure meeting links
 
-**AI-Powered Analysis**
-- Automatic meeting summarization using Google Gemini AI
-- Action item extraction with assignee tracking
-- Key decision identification
-- Sentiment analysis (Positive, Neutral, Negative)
-- Support for both live chat and transcript processing
+### AI-Powered Intelligence
+- **Automatic Summarization** using Google Gemini AI's advanced language models
+- **Smart Action Item Extraction** with assignee identification
+- **Key Decision Tracking** to capture critical meeting outcomes
+- **Sentiment Analysis** (Positive, Neutral, Negative) for meeting tone assessment
+- **Dual Input Support** for both live chat and uploaded transcripts
 
-**Semantic Search & RAG**
-- Vector embeddings-powered semantic search across all meetings
-- Natural language queries (e.g., "pricing page redesign discussion")
-- RAG (Retrieval-Augmented Generation) chat with individual meetings
-- Ask questions about specific meetings with context-aware AI responses
+### Semantic Search & RAG
+- **Vector Embeddings** using Google's `gemini-embedding-001` model (768-dimensional)
+- **Natural Language Search** across all meetings - find discussions by intent, not just keywords
+- **RAG-Powered Chat** - ask contextual questions about any meeting and get AI answers grounded in actual content
+- **Cosine Similarity Ranking** with relevance scoring for precision results
+- **Real-Time Embedding Generation** integrated into meeting creation workflow
 
-**Task Management**
-- Interactive checklists with real-time status updates
-- Cross-participant task synchronization
-- Progress tracking and completion status
+### Task Management
+- **Interactive Checklists** with real-time status synchronization
+- **Cross-Participant Updates** that sync instantly across all connected users
+- **Progress Tracking** with visual completion indicators
 
 ## Tech Stack
 
-**Frontend:** React 18, TypeScript, Socket.IO Client, TailwindCSS, React Router, Axios, Vite  
-**Backend:** Node.js, Express, TypeScript, Socket.IO, MongoDB, Mongoose  
-**AI/ML:** Google Gemini AI (text generation & embeddings)  
-**Authentication:** JWT, bcryptjs  
-**Vector Search:** Text embeddings with cosine similarity  
-**Other:** Multer (file uploads), CORS
+**Frontend**  
+React 18, TypeScript, Socket.IO Client, TailwindCSS, React Router, Axios, Vite
 
-## Installation
+**Backend**  
+Node.js, Express 5, TypeScript, Socket.IO, MongoDB, Mongoose
+
+**AI/ML**  
+Google Gemini AI (`gemini-1.5-flash` for text generation, `gemini-embedding-001` for vector embeddings)
+
+**Authentication & Security**  
+JWT, bcryptjs, CORS, input validation, message length limits
+
+**Vector Search**  
+Text embeddings with cosine similarity (ready for MongoDB Atlas Vector Search migration)
+
+**DevOps**  
+Multer (file uploads), environment-based configuration
+
+## Quick Start
 
 ### Prerequisites
 - Node.js v16 or higher
-- MongoDB (local or MongoDB Atlas)
-- Google Gemini API key ([Get API Key](https://makersuite.google.com/app/apikey))
+- MongoDB (local instance or MongoDB Atlas)
+- Google Gemini API key ([Get one here](https://makersuite.google.com/app/apikey))
 
 ### Backend Setup
 
@@ -60,13 +72,15 @@ npm install
 Create `.env` file in `server/` directory:
 ```env
 PORT=5000
-MONGO_URI=mongodb://127.0.0.1:27017/syncmind_ai
-JWT_SECRET=your_secure_random_string
-GEMINI_API_KEY=your_gemini_api_key
+MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/?appName=YourAppName
+JWT_SECRET=your_secure_random_string_here
+GEMINI_API_KEY=your_gemini_api_key_here
 CLIENT_URL=http://localhost:5173
 ```
 
-Start the backend:
+> **Note**: For local MongoDB, use `mongodb://127.0.0.1:27017/syncmind_ai`. For MongoDB Atlas, use the connection string from your cluster (replace `username`, `password`, `cluster`, and `YourAppName` with your actual credentials).
+
+Start the server:
 ```bash
 npm run dev
 ```
@@ -81,228 +95,167 @@ npm run dev
 
 Access the application at `http://localhost:5173`
 
-## Usage
+## Core Workflows
 
-### Live Meeting Rooms
+### Live Collaboration
+1. Create a new live meeting room from the dashboard
+2. Share the secure link with participants
+3. Collaborate in real-time with instant message sync
+4. Generate AI-powered summaries with one click
 
-1. Click "New Meeting" on the dashboard
-2. Select "Live Meeting Room" tab
-3. Enter a meeting title and click "Create Live Meeting Room"
-4. Share the meeting link with participants using the "Share Link" button
-5. Collaborate in real-time with instant messaging
-6. Click "Summarize" to generate AI insights from the conversation
-
-### Process Existing Transcripts
-
-1. Click "New Meeting" on the dashboard
-2. Select "Process Transcript" tab
-3. Paste your meeting notes or transcript
-4. Click "Generate Notes & Tasks" for instant AI analysis
+### Transcript Processing
+1. Upload or paste existing meeting transcripts
+2. Receive instant AI analysis with action items and key decisions
+3. Vector embeddings automatically generated for future search
 
 ### Semantic Search
+- Type natural language queries like "budget constraints discussion" or "deployment timeline"
+- Get ranked results with relevance scores and contextual snippets
+- Results powered by 768-dimensional vector embeddings
 
-1. Use the search bar on the dashboard
-2. Enter natural language queries (e.g., "deployment concerns" or "pricing discussion")
-3. View relevant meetings with snippets and relevance scores
-4. Click any result to view full meeting details
+### RAG Chat
+- Open any meeting and navigate to "Ask AI" tab
+- Ask specific questions: "What was the final decision on pricing?"
+- Receive accurate, context-grounded answers with source references
 
-### Ask AI About Meetings
-
-1. Open any meeting from the dashboard
-2. Click the "Ask AI" tab
-3. Type questions about the meeting (e.g., "What was decided about the launch date?")
-4. Receive context-aware answers based on meeting content
-5. View source passages used to generate each answer
-
-### Managing Meetings
-
-- View all meetings from the dashboard
-- Click any meeting to see details: Summary, Action Items, Key Decisions, Full Transcript, Ask AI
-- Mark tasks as complete by clicking them (syncs across all participants)
-- Access past meeting rooms via the "Live Room" button
-
-## API Endpoints
+## API Reference
 
 ### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - User login
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User authentication
 
 ### Meetings
-- `GET /api/meetings` - Get user's meetings
-- `GET /api/meetings/:id` - Get meeting details (owner only)
+- `GET /api/meetings` - List user's meetings
+- `GET /api/meetings/:id` - Get meeting details (owner)
 - `GET /api/meetings/:id/shared` - Get meeting details (any authenticated user)
 - `POST /api/meetings/create` - Create empty meeting for live chat
 - `POST /api/meetings/process` - Process transcript with AI
 - `POST /api/meetings/:id/summarize` - Summarize live chat messages
-- `POST /api/meetings/search` - Semantic search across meetings
-- `POST /api/meetings/:id/chat` - RAG chat with specific meeting
+- `POST /api/meetings/search` - Semantic search (body: `{ query: string }`)
+- `POST /api/meetings/:id/chat` - RAG chat (body: `{ question: string }`)
 
-### Chat
-- `GET /api/chat/meetings/:id/room` - Get meeting room and message history
-
-### Tasks
+### Tasks & Analytics
 - `PATCH /api/tasks/:meetingId/items/:taskId` - Toggle task completion
+- `GET /api/analytics` - User analytics and statistics
 
-### Analytics
-- `GET /api/analytics` - Get user analytics and statistics
+### WebSocket Events
+**Emit**: `join-meeting`, `leave-meeting`, `send-chat-message`, `typing-start`, `typing-stop`, `update-task-status`  
+**Listen**: `chat-message`, `meeting-presence`, `user-typing`, `user-stopped-typing`, `task-status-changed`
 
-## Socket.IO Events
+## Architecture Highlights
 
-**Client to Server:**
-- `join-meeting` - Join a meeting room
-- `leave-meeting` - Leave a meeting room
-- `send-chat-message` - Send a message
-- `typing-start` - User started typing
-- `typing-stop` - User stopped typing
-- `update-task-status` - Update task completion
+**Vector Embedding Pipeline**  
+Intelligent text chunking (650 chars, 100 char overlap) with Google `gemini-embedding-001` producing 768-dimensional embeddings. Cosine similarity computed in-memory with MongoDB storage, architecture-ready for Atlas Vector Search migration.
 
-**Server to Client:**
-- `chat-message` - New message received
-- `meeting-presence` - Participant count updated
-- `user-typing` - Another user is typing
-- `user-stopped-typing` - User stopped typing
-- `task-status-changed` - Task status updated
+**Real-Time Infrastructure**  
+Socket.IO WebSocket layer with room-based isolation, sub-100ms message sync, live presence tracking, and optimistic UI updates with server reconciliation.
+
+**Security**  
+JWT authentication (7-day expiration), bcryptjs password hashing, middleware-protected routes, Socket.IO connection authentication, input validation, and strict CORS configuration.
 
 ## Project Structure
 
 ```
 Sync-Mind-ai/
-├── client/                 # React frontend
+├── client/                          # React TypeScript frontend
 │   ├── src/
-│   │   ├── components/     # Reusable UI components
-│   │   ├── pages/          # Route pages
-│   │   ├── services/       # API and Socket services
-│   │   └── assets/         # Static assets
+│   │   ├── components/              # Reusable UI components
+│   │   ├── pages/                   # Route pages (Dashboard, Analytics, Login, etc.)
+│   │   ├── services/                # API client & Socket.IO integration
+│   │   └── assets/                  # Static assets
 │   └── package.json
-├── server/                 # Node.js backend
+├── server/                          # Node.js TypeScript backend
 │   ├── src/
-│   │   ├── config/         # Database configuration
-│   │   ├── controllers/    # Request handlers
-│   │   ├── middlewares/    # Auth and upload middlewares
-│   │   ├── models/         # MongoDB schemas (Meeting, User, ChatMessage, MeetingChunk)
-│   │   ├── routes/         # API routes
-│   │   ├── services/       # AI processing & embedding services
-│   │   ├── socket.ts       # Socket.IO server
-│   │   └── server.ts       # Application entry point
+│   │   ├── config/                  # Database configuration
+│   │   ├── controllers/             # Request handlers
+│   │   ├── middlewares/             # Auth & upload middlewares
+│   │   ├── models/                  # Mongoose schemas (Meeting, User, ChatMessage, MeetingChunk)
+│   │   ├── routes/                  # Express routes
+│   │   ├── services/                # AI processing (aiService, embeddingService)
+│   │   ├── socket.ts                # Socket.IO real-time server
+│   │   └── server.ts                # Application entry point
 │   └── package.json
 └── README.md
 ```
-
-## Development
-
-### Available Scripts
-
-**Backend:**
-```bash
-npm run dev      # Development server with hot reload
-npm run build    # Compile TypeScript to JavaScript
-npm start        # Run production build
-```
-
-**Frontend:**
-```bash
-npm run dev      # Development server with HMR
-npm run build    # Build for production
-npm run preview  # Preview production build
-npm run lint     # Run ESLint
-```
-
-## Security Features
-
-- Password hashing using bcryptjs
-- JWT-based authentication with 7-day token expiration
-- Protected API routes with authentication middleware
-- Socket.IO connection authentication
-- CORS configuration for authorized origins
-- Environment variable management for sensitive data
-- Input validation and sanitization
-- Message length limits (2000 characters)
-- Room-based message isolation
 
 ## Environment Variables
 
 | Variable | Description | Example |
 |----------|-------------|---------|
 | `PORT` | Server port | `5000` |
-| `MONGO_URI` | MongoDB connection string | `mongodb://127.0.0.1:27017/syncmind_ai` |
-| `JWT_SECRET` | Secret key for JWT | `your_secure_random_string` |
-| `GEMINI_API_KEY` | Google Gemini API key | `your_api_key` |
-| `CLIENT_URL` | Frontend URL for CORS | `http://localhost:5173` |
+| `MONGO_URI` | MongoDB connection | Local: `mongodb://127.0.0.1:27017/syncmind_ai`<br>Atlas: `mongodb+srv://username:password@cluster.mongodb.net/?appName=YourApp` |
+| `JWT_SECRET` | JWT signing key | `your_secure_random_string_here` |
+| `GEMINI_API_KEY` | Google Gemini key | `your_gemini_api_key_here` |
+| `CLIENT_URL` | Frontend URL (CORS) | `http://localhost:5173` |
+
+## Development Commands
+
+**Backend**
+```bash
+npm run dev      # Development server with hot reload (nodemon + ts-node)
+npm run build    # Compile TypeScript to JavaScript
+npm start        # Run production build
+```
+
+**Frontend**
+```bash
+npm run dev      # Vite dev server with HMR
+npm run build    # Production build with type checking
+npm run preview  # Preview production build
+npm run lint     # ESLint code quality check
+```
 
 ## Troubleshooting
 
-**Backend won't start:**
-- Ensure `.env` file exists with all required variables
-- Verify MongoDB is running
-- Check port 5000 is not in use
+**Backend won't start**
+- Verify `.env` file exists with all required variables
+- Ensure MongoDB is running: `mongod --version` or check Atlas connection
+- Check port 5000 availability: `netstat -ano | findstr :5000` (Windows) or `lsof -i :5000` (Mac/Linux)
 
-**Socket.IO not connecting:**
-- Check browser console for errors
-- Verify backend is running on correct port
-- Ensure CORS is properly configured
+**Socket.IO connection fails**
+- Check browser console for WebSocket errors
+- Verify backend is running and accessible
+- Confirm CORS configuration matches frontend URL
 
-**"Meeting not found" error:**
-- Confirm you are logged in
-- Verify meeting ID in URL is correct
-- Check database connection
+**AI features not working**
+- Test API key validity at [Google AI Studio](https://aistudio.google.com/)
+- Check server logs for detailed Gemini API error messages
+- Ensure meeting has content (minimum one message)
 
-**AI Summarization fails:**
-- Verify `GEMINI_API_KEY` is valid
-- Ensure meeting has at least one message
-- Check backend logs for detailed errors
+**Semantic search returns no results**
+- Wait 2-3 seconds after meeting creation for embeddings to generate
+- Check server logs for "Embedded X chunks for meeting [id]" confirmation
+- Try broader or more specific queries based on actual meeting content
 
-**Semantic search returns no results:**
-- Wait a few seconds after creating meetings for embeddings to generate
-- Check server logs for "Embedded X chunks" messages
-- Try more specific search queries
-- Verify MongoDB is storing MeetingChunk documents
+**RAG chat gives incorrect answers**
+- Ensure meeting has substantial transcript content (100+ words recommended)
+- Ask specific questions related to actual meeting discussions
+- Check "Source Chunks" to see context the AI used
 
-**RAG chat gives generic answers:**
-- Ensure the meeting has substantial transcript content
-- Check that embeddings were generated for the meeting
-- Try more specific questions related to meeting content
+## Performance & Compatibility
 
-## Performance Considerations
-
-- Message history limited to 200 messages per load
-- Socket.IO uses WebSocket transport for optimal performance
+**Optimizations**
+- Message history pagination (200 messages per load)
+- WebSocket transport for sub-100ms latency
 - MongoDB indexes on frequently queried fields
-- Debounced typing indicators to reduce network traffic
-- React optimization with memo and useCallback
+- Debounced search and typing indicators
+- React memo and useCallback for render optimization
 
-## Browser Compatibility
-
-- Chrome/Edge v90+
-- Firefox v88+
-- Safari v14+
-- WebSocket support required
+**Browser Support**  
+Chrome/Edge 90+, Firefox 88+, Safari 14+ (WebSocket required)
 
 ## Contributing
 
-Contributions are welcome! Please follow these steps:
-
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
+2. Create a feature branch (`git checkout -b feature/new-feature`)
+3. Commit changes (`git commit -m 'feat: add new feature'`)
+4. Push to branch (`git push origin feature/new-feature`)
 5. Open a Pull Request
 
 ## License
 
-This project is licensed under the ISC License.
-
-## Acknowledgments
-
-- Google Gemini AI for intelligent text analysis
-- Socket.IO for real-time communication infrastructure
-- MongoDB for reliable data persistence
-- React and Node.js communities for excellent documentation
-- Open-source contributors whose libraries made this possible
-
-## Support
-
-For issues, questions, or suggestions, please open an issue on the repository.
+ISC License
 
 ---
 
-**Built for better team collaboration through AI-powered meeting intelligence.**
+**Built with modern web technologies to transform meeting collaboration through AI-powered intelligence.**
